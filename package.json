@@ -64,6 +64,7 @@
     "classnames": "^2.3.0",
     "lodash": "^4.17.0",
     "moment": "^2.29.0",
+    "numeral": "^2.0.6",
     "omit.js": "^2.0.2",
     "rc-menu": "^9.1.0",
     "rc-util": "^5.16.0",
@@ -71,6 +72,7 @@
     "react-dev-inspector": "^1.7.0",
     "react-dom": "^17.0.0",
     "react-helmet-async": "^1.2.0",
+    "react-router": "^4.3.1",
     "umi": "^3.5.0"
   },
   "devDependencies": {
