@@ -36,8 +36,14 @@ const Login: React.FC = () => {
 
   const intl = useIntl();
 
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
+  const fetchUserInfo = async (values) => {
+    // const userInfo = await initialState?.fetchUserInfo?.();
+
+    const userInfo = {
+      name: values.userName,
+      email: values.email,
+    }
+
     if (userInfo) {
       await setInitialState((s) => ({
         ...s,
@@ -56,7 +62,7 @@ const Login: React.FC = () => {
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
+        await fetchUserInfo(msg.data);
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) return;
         const { query } = history.location;
@@ -71,14 +77,10 @@ const Login: React.FC = () => {
           type: values.type,
           currentAuthority: "1",
         }
+        message.error(msg.message);
         setUserLoginState(userStatus);
-        const defaultLoginFailureMessage = intl.formatMessage({
-          id: 'pages.login.failure',
-          defaultMessage: msg.message,
-        });
-        message.error(defaultLoginFailureMessage);
-      }
 
+      }
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
