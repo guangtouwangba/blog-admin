@@ -29,12 +29,22 @@ const LoginMessage: React.FC<{
   />
 );
 
+
+
 const Login: React.FC = () => {
+
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const [userLoginParam, setUserLoginParam] = useState<API.LoginParams>(JSON.parse(localStorage.getItem("currentUser")) || {});
+
+  console.log(userLoginParam)
+
+
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
 
   const intl = useIntl();
+
+
 
   const fetchUserInfo = async (values) => {
     // const userInfo = await initialState?.fetchUserInfo?.();
@@ -52,6 +62,10 @@ const Login: React.FC = () => {
     }
   };
 
+  const writeCurrentUser = async (values) => {
+    localStorage.setItem("currentUser", JSON.stringify(values))
+  }
+
   const handleSubmit = async (values: API.LoginParams) => {
     try {
       // 登录
@@ -63,6 +77,7 @@ const Login: React.FC = () => {
         });
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo(msg.data);
+        await writeCurrentUser(values);
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) return;
         const { query } = history.location;
@@ -78,7 +93,7 @@ const Login: React.FC = () => {
           currentAuthority: "1",
         }
         message.error(msg.message);
-        setUserLoginState(userStatus);
+        await setUserLoginState(userStatus);
 
       }
     } catch (error) {
@@ -102,6 +117,8 @@ const Login: React.FC = () => {
           title="Ant Design"
           subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           initialValues={{
+            account: userLoginParam.account,
+            password: userLoginParam.password,
             autoLogin: true,
           }}
           actions={[
@@ -166,6 +183,7 @@ const Login: React.FC = () => {
                     ),
                   },
                 ]}
+
               />
               <ProFormText.Password
                 name="password"
