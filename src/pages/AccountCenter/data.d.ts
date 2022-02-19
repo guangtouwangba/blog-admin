@@ -27,7 +27,7 @@ export type NoticeType = {
 };
 
 export type CurrentUser = {
-  name: string;
+  userName: string;
   avatar: string;
   userid: string;
   notice: NoticeType[];

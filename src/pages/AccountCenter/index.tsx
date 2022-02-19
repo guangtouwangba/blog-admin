@@ -10,6 +10,7 @@ import Applications from './components/Applications';
 import type { CurrentUser, TagType, tabKeyType } from './data.d';
 import { queryCurrent } from './service';
 import styles from './Center.less';
+import {useModel} from "@@/plugin-model/useModel";
 
 const operationTabList = [
   {
@@ -51,6 +52,7 @@ const TagList: React.FC<{ tags: CurrentUser['tags'] }> = ({ tags }) => {
       ref.current?.focus();
     }
   };
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -94,12 +96,22 @@ const TagList: React.FC<{ tags: CurrentUser['tags'] }> = ({ tags }) => {
 };
 
 const AccountCenter: React.FC<RouteChildrenProps> = () => {
+  const { initialState, setInitialState } = useModel('@@initialState');
   const [tabKey, setTabKey] = useState<tabKeyType>('articles');
 
   //  获取用户信息
+  const username = initialState.currentUser.name;
   const { data: currentUser, loading } = useRequest(() => {
-    return queryCurrent();
+    return queryCurrent({
+      username: username
+    });
   });
+
+  // 更改头像函数
+  const handleAvatarChange = () => {
+    // 弹出文件选择器
+    console.log("更换图片")
+  }
 
   //  渲染用户信息
   const renderUserInfo = ({ title, group, geographic }: Partial<CurrentUser>) => {
@@ -164,8 +176,11 @@ const AccountCenter: React.FC<RouteChildrenProps> = () => {
             {!loading && currentUser && (
               <div>
                 <div className={styles.avatarHolder}>
-                  <img alt="" src={currentUser.avatar} />
-                  <div className={styles.name}>{currentUser.name}</div>
+                  <input id="avatarFor" type="file" style={{display: "none"}} onChange={handleAvatarChange}/>
+                  <label className={styles.label} for="avatarFor">
+                    <img alt="" src={currentUser.avatar} />
+                  </label>
+                  <div className={styles.name}>{currentUser.userName}</div>
                   <div>{currentUser?.signature}</div>
                 </div>
                 {renderUserInfo(currentUser)}
