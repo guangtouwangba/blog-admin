@@ -49,10 +49,7 @@ const Login: React.FC = () => {
   const fetchUserInfo = async (values) => {
     // const userInfo = await initialState?.fetchUserInfo?.();
 
-    const userInfo = {
-      name: values.userName,
-      email: values.email,
-    }
+    const userInfo = values
 
     if (userInfo) {
       await setInitialState((s) => ({

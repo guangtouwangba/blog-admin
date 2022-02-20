@@ -100,7 +100,7 @@ const AccountCenter: React.FC<RouteChildrenProps> = () => {
   const [tabKey, setTabKey] = useState<tabKeyType>('articles');
 
   //  获取用户信息
-  const username = initialState.currentUser.name;
+  const username = initialState.currentUser.username;
   const { data: currentUser, loading } = useRequest(() => {
     return queryCurrent({
       username: username
@@ -108,9 +108,26 @@ const AccountCenter: React.FC<RouteChildrenProps> = () => {
   });
 
   // 更改头像函数
-  const handleAvatarChange = () => {
-    // 弹出文件选择器
-    console.log("更换图片")
+  const handleAvatarChange = async (e) => {
+    e.preventDefault()
+
+    const reader = new FileReader()
+    const file = e.target.files[0]
+    reader.onload = ev => {
+      let img = new Image()
+      img.src = ev.target.result
+      console.log(img)
+      currentUser.avatar = img.src
+      currentUser.title = "1"
+      setInitialState((s) => ({
+        ...s,
+        currentUser: currentUser,
+      }));
+      // 把src存入数据库
+
+    }
+    await reader.readAsDataURL(file)
+    console.log(currentUser)
   }
 
   //  渲染用户信息
@@ -125,31 +142,31 @@ const AccountCenter: React.FC<RouteChildrenProps> = () => {
           />
           {title}
         </p>
-        <p>
-          <ClusterOutlined
-            style={{
-              marginRight: 8,
-            }}
-          />
-          {group}
-        </p>
-        <p>
-          <HomeOutlined
-            style={{
-              marginRight: 8,
-            }}
-          />
-          {(geographic || { province: { label: '' } }).province.label}
-          {
-            (
-              geographic || {
-                city: {
-                  label: '',
-                },
-              }
-            ).city.label
-          }
-        </p>
+        {/*<p>*/}
+        {/*  <ClusterOutlined*/}
+        {/*    style={{*/}
+        {/*      marginRight: 8,*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*  {group}*/}
+        {/*</p>*/}
+        {/*<p>*/}
+        {/*  <HomeOutlined*/}
+        {/*    style={{*/}
+        {/*      marginRight: 8,*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*  {(geographic || { province: { label: '' } }).province.label}*/}
+        {/*  {*/}
+        {/*    (*/}
+        {/*      geographic || {*/}
+        {/*        city: {*/}
+        {/*          label: '',*/}
+        {/*        },*/}
+        {/*      }*/}
+        {/*    ).city.label*/}
+        {/*  }*/}
+        {/*</p>*/}
       </div>
     );
   };
@@ -176,12 +193,12 @@ const AccountCenter: React.FC<RouteChildrenProps> = () => {
             {!loading && currentUser && (
               <div>
                 <div className={styles.avatarHolder}>
-                  <input id="avatarFor" type="file" style={{display: "none"}} onChange={handleAvatarChange}/>
+                  <input id="avatarFor" type="file" accept="image/*" style={{display: "none"}} onChange={(e)=>handleAvatarChange(e)}/>
                   <label className={styles.label} for="avatarFor">
                     <img alt="" src={currentUser.avatar} />
                   </label>
-                  <div className={styles.name}>{currentUser.userName}</div>
-                  <div>{currentUser?.signature}</div>
+                  <div className={styles.name}>{currentUser.username}</div>
+                  {/*<div>{currentUser?.signature}</div> 管理段无需签名*/}
                 </div>
                 {renderUserInfo(currentUser)}
                 <Divider dashed />
